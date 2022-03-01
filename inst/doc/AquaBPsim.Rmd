@@ -1,0 +1,518 @@
+---
+title: "Introduction to AquaBPsim"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AquaBPsim}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+AquaBPsim is a package that can be used to simulate (aquaculture) breeding programs. The functions are written to simulate production and reproduction systems encountered in aquaculture and it is easy to combine the functions of the package with custom functions. Simulating breeding programs is useful to predict the expected genetic gain and rate of inbreeding. Additionally, simulations can be used to predict the effect of changes in the breeding program, for example a change in selection intensity or mating structure. 
+
+Several programs and R package already exist to simulate breeding programs. However, most of them simulate genome wide-markers and QTLs, which can result in an unrealistically fast reduction of genetic variance due to fixation of QTL (Bastiaansen et al., 2012) compared to real breeding programs (Brotherstone & Goddard, 2005). Additionally, not simulating genome wide-markers will result in less computation time. Other existing software, such as SelAction (Rutten et al., 2002), do not allow simulation of the specific breeding program structures of aquaculture breeding programs, such as inbreeding with pre-selection and sex reversal.
+
+## General structure 
+To simulate a breeding program, a founder population needs to be simulated. But first, a list called 'BPdata' can be created with parameters that will be used in the functions. Several parameter do not need to be specified anymore in the functions when this list is created. This list needs to be called BPdata and the objects in the list need to have specific names.
+
+Simulating the founder population will result in a data frame that needs to be called 'ped'. Simulated offspring will be added to this 'ped' data frame. To create a new generation, the mating and offspring needs to be simulated. The mating functions will result in a new data frame, in which the parents of each full sib family are specified. For each full sib family, offspring can be simulated, which are added to the 'ped' data frame. After the offspring are simulated, pre-selection steps can be added to the simulation, followed by simulating estimated breeding values (EBV) and the final selection, to select the parents for the next generation. The output of the simulation is a pedigree file with the genetic effects and phenotypes of all traits. This pedigree file can be used to calculate for example genetic gain and the rate of inbreeding.
+
+Several functions will be explained with an example of a breeding program with a family design. At the end, two other examples are given: one for a family design and one for a group mating design.
+
+### BPdata
+At the start of the simulation, a list called 'BPdata' can be created. This list can contain several parameters, mostly genetic parameters. The parameters that can be added to this list are:
+
+* The number of males and females to be selected (called 'Nm' and 'Nf')
+* The probability that an offspring is a male (called 'probmale')
+* The number of traits (called 'Ntraits')
+* The heritabilities of the traits (a vector called 'h2')
+* The common environmental effects of the traits (a vector called 'c2')
+* The genetic, common environmental and residual variances (vectors called 'a_var', 'c_var' and 'e_var', respectively)
+* The mean of the traits (vector called 'mean')
+* The genetic, common environmental and residual correlations (matrices called 'Rgen', 'Rcom' and 'Rres', respectively)
+        
+Adding these parameters to a list called 'BPdata' will make the simulation easier, because the parameters from BPdata do not need to be specified anymore in the functions. The function gen_param() can also be used to create the list 'BPdata' from a excel file, which should have a specific format.
+
+##### Example
+
+```{r  eval=FALSE}
+library(AquaBPsim)
+
+BPdata <- list(Ntraits = 3,
+             h2 = c(0.3,0.25,0.15),
+             c2 = c(0.1,0.05,0.02),
+             p_var = c(100,6400,4),
+             a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+             c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+             e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+             mean = c(50, 400, 10),
+             Rgen = matrix(c(1,   0.55,  0.1,
+                             0.55,   1,  0.3,
+                             0.1 ,  0.3,   1), nrow = 3),
+             Rres = matrix(c(1,   0.3,  0,
+                             0.3,   1,  0,
+                             0 ,  0, 1), nrow = 3),
+             Rcom = matrix(c(1,   0,  0,
+                             0,   1,  0,
+                             0 ,  0,  1), nrow = 3))
+
+```
+
+
+### Founder population
+At the start of the simulation, a founder population needs to be created. There are two functions that can create the founder population, namely founderpopfam() for a founder population of a breeding program with a family design and founderpopgroup() for a founder population of a breeding program with a group mating design. The input parameters are the same for both founder population functions, but the output is slightly different: founderpopfam() will create a data frame with a column 'FSfam' (which indicates to which full sib family the fish belongs) and founderpopgroup() will create a data frame with the column 'Contribution' instead of 'FSfam'. The column 'Contribution' shows the relative contribution of a fish in the group mating, see function groupmating(). 
+
+The function simulates unrelated fish with genetic, common environmental and residual effects for each trait. Genetic effects are drawn from a normal distribution with a mean equal to the populations mean (provided with parameter 'mean') and a variance equal to the genetic variance (provided with parameter 'a_var'). Common environmental and residual effects are drawn from normal distributions with mean zero and variance equal to the common environmental and residual variances, respectively. These variances are provided with the parameters 'c_var' and 'e_var'. Phenotypes are calculated by adding up these effects and the traits are correlated according to the specified correlations. 
+
+Two types of founder animals can be simulated: fish that are used to breed the first generation (parameters 'Nm' for males and 'Nf' for females) and additional selection candidates for the next generation(s) (parameters 'Nm2' for males and 'Nf2' for females). In addition to the number of fish that need to be simulated, genetic parameters and the number of traits need to be provided, unless they are specified in the list 'BPdata'. If not all traits are used for the final selection, and therefore not all of them need to be included in the selection index, the parameter 'TraitsIndex' needs to be specified. A vector with traits needs to be provided for this parameter, see example. Batches can be assigned to the founder fish, using either parameter 'Nbatch' to provide the total number of batches or parameter 'batch' to provide a vector with the names of the batches. 
+
+If desired, EBVs can be simulated for the founder animals, by setting the parameter 'est_EBV' to True. By default, no EBVs are simulated. If EBVs are simulated, then there are four options: 
+
+1. 0 for giving each animal a breeding values of 0 for the specific trait; 
+2. "mean_pop" for simulating EBVs that are equal to the mean of the population for all founder animals. The mean of the population is provided in the vector 'mean';
+3. "pheno" for simulating EBVs that are equal to the phenotype of the animal for the specific trait;
+4. "EBV" for simulating EBVs as a value correlated to the true breeding value of the animal. This correlation equals the accuracy. Accuracies need to be specified in the parameter 'accuracy'
+
+##### Example
+In this example, a founder population is simulated for a family design. No additional fish and no EBVs are simulated. From the three simulated traits, two are in the selection index (trait 2 and 3). The founder animals are divided over four batches, with the numbers -3, -2, -1 and 0.
+
+```{r  eval=FALSE}
+
+ped <- founderpopfam(Nm=200, 
+                     Nf=200,  
+                     batch=c(0,-1,-2,-3), 
+                     Ntraits=3, 
+                     TraitsIndex=c(2,3), 
+                     a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+                     c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+                     e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+                     mean = c(50, 400, 10),
+                     Rgen = matrix(c(1,   0.55,  0.1,
+                                     0.55,   1,  0.3,
+                                     0.1 ,  0.3,   1), nrow = 3),
+                     Rres = matrix(c(1,   0.3,  0,
+                                     0.3,   1,  0,
+                                     0 ,  0, 1), nrow = 3),
+                     Rcom = matrix(c(1,   0,  0,
+                                     0,   1,  0,
+                                     0 ,  0,  1), nrow = 3))
+
+
+```
+
+
+### Mating
+Two different mating functions exist in this package, namely randommating(), which can be used for simulating a family design, and groupmating(), for simulations of a group mating design. The output of these two functions is a data frame with for each full sib family the sire and dam specified and (optional for the family design) the number of offspring per full sib family. For these functions, a data frame called 'ped' needs to be present in the data. 'ped' needs to contain all the sires and dams that need to be allocated to each other and the columns sex, selected, generation, batch and id, which should be the first column. The sires and dams can come from multiple batches or generations. In that case, a vector of batches or generations need to be provided to the parameters 'gen' and 'batch'.
+
+In the function randommating(), sires and dams are randomly allocated to each other, and each sires or dam contributes equally to the number of full sib families. The number of full sib families need to be specified in this function. 
+
+In the function groupmating(), the sires and dams do not equally contribute to the offspring. It is possible that only a part of the selected fish will contribute. This part can be specified with the parameters 'contr_m' and 'contr_f'. A contribution is assigned to the fish that do contribute, and the contribution of the fish that do not contribute is set to zero. By default, the contributions of the fish that do contribute come from a gamma distribution. The default shape and scale of the gamma distribution are 0.75 and 0.11, respectively. A uniform distribution can also be specified for the contributions of the sires and dams. After the contributions are assigned, the number of offspring for each possible combination of sires and dams is calculated. First, the family contribution is calculated as the product of the two parent contributions. Each family contribution is divided by the sum of all family contributions and then multiplied with the total number of offspring per batch.
+
+##### Example
+In this example, 50 sires and dams (from the founder population simulated in the previous example) are randomly assigned to each other in order to be able to create 100 full sib families, resulting in a mating ratio of 2:2.
+```{r  eval=FALSE}
+Mating <- randommating(gen = 0,
+                       batch = -3,
+                       Nfam_FS = 100)
+
+```
+
+### Simulating offspring
+For each full sib family, offspring can be simulated with the functions offspringFSfam() and offspringFSgroup(). The simulated offspring are added to the 'ped' file. Genetic, common environmental and residual effects and phenotypes are simulated for the offspring. Residual effects and phenotypes are simulated in the same way as described under 'Founder population'. Genetic effects are simulated as half of the genetic effect of the dam and half of the genetic effect of the sire, plus a Mendelian sampling term. The Mendelian sampling term is drawn from  a normal distribution with mean zero and a variance equal to half of the genetic variance and corrected for the inbreeding level of the sire and dam. A common environmental effect will be simulated for each full sib family, and is drawn from a normal distribution with mean zero and a variance equal to the common environmental variance.
+
+The input parameters are similar to the functions that simulate the founder populations, except for the parameters that make it possible to simulate EBVs: they are not present in offspringFSfam() and offspringFSgroup(). Additional parameters are 'gen', 'sire', 'dam', 'No' and 'probmale'. 'gen' specifies the generation of the offspring, 'sire' and 'dam' the sire and dam of the offspring, 'No' the number of offspring in the full sib family and 'probmale' is the probability that a fish is a male.
+
+##### Example
+In this example, the first batch of offspring of generation one is simulated. Due to the loop, 50 offspring for each full sib family in the data frame 'Mating' are simulated. 
+```{r  eval=FALSE}
+for(mating in 1:nrow(Mating)){
+  ped <- offspringFSfam(gen=1,
+                        No=50,
+                        sire=Mating$Sire[mating],
+                        dam=Mating$Dam[mating],
+                        batch = 1,
+                        probmale = 0.5,
+                        TraitsIndex = c(2,3))
+}
+
+```
+
+### Pre-selection and selection candidates
+This package contains three different functions for pre-selecting the offspring. These functions can be used for phenotypically pre-selecting offspring (preselphen()), randomly assigning the offspring to different environments or groups (preselrandom()) or pre-selection the selection candidates based on their EBVs, index or phenotypes (preselselcand()). These functions are discussed below, together with the functions avail_selection() and survive(), which can be used to determine which fish survive and therefore become available as selection candidates, and which of the pre-selected fish survive till the moment of breeding value estimation.
+
+####preselphen()
+The function preselphen() can be used to pre-select offspring based on the phenotype of one trait. The offspring can be pre-selected for several environments, based on the same trait. For example, in a breeding program, some fish are pre-selected to become selection candidates and other fish are pre-selected for sib testing. To simulate this, the parameter 'Nenv' needs to be 2. Fish with the highest phenotype for the specified trait are pre-selected for the first environment, and the next best fish are pre-selected for the second environment. Pre-selected fish get the environment they are selected for specified in the column 'preselected' in the 'ped' data frame. If fish need to be pre-selected for more than one environment, then a vector with the number of fish that need to be pre-selected for each environment need to be specified for the parameter 'Npresel'. If fish need to be pre-selected for just one environment, then one number for the number of pre-selected fish can be provided for the parameter 'Npresel'.
+
+By default, pre-selection takes place within a full sib family. If this is not desired, then the parameter 'withinfam' can be set to False.
+
+##### Example
+In this example, 10 fish per full sib family are pre-selected for environment 1 and 5 fish per full sib family are pre-selected for environment 2. Pre-selection was based on the phenotype of trait 1.
+```{r  eval=FALSE}
+ped <- preselphen(gen = 1,
+                  batch=1,
+                  Nenv = 2, 
+                  Npresel = c(10,5), 
+                  trait= 1)
+
+```
+
+####preselrandom()
+preselrandom() can be used to randomly pre-select fish for different environments. The function works in the same way as preselphen(), except that fish are randomly pre-selected instead of based on their phenotype. Therefore, parameters 'trait' and 'Ntraits' do not need to be specified in preselrandom(). 
+
+##### Example
+In this example, 10 fish per full sib family are randomly pre-selected for environment 1 and 5 fish per full sib family are randomly pre-selected for environment 2.
+```{r eval=FALSE}
+ped <- preselrandom(gen = 1,
+                    batch=1,
+                    Nenv = 2, 
+                    Npresel = c(10,5))
+
+```
+
+####preselselcand()
+The function preselselcand() can be used to pre-select selection candidates based on either their index (default), their EBV of one trait or their phenotype of one trait. Fish are preselected from the fish that are available for selection (column selcand==1). Fish that are not pre-selected will be assigned a value of 2 for the column selcand. These fish will not be used in the function select().
+
+In this function, the total number of fish that needs to be pre-selected can be specified, or a number of males and females can be specified. If the total number of fish is specified (parameter 'N'), then fish are pre-selected regardless of their sex. If a family design is simulated, then the parameter 'within_FSfam' can be set to True, if within family selection is desired. The default is False. In case selection does not take place within a full sib family, then a maximum number of sibs that can be selected from one full sib family can be specified using the parameter 'max_FSfam'. 
+
+As mentioned before, pre-selection can be based on either the index (default), an EBV of one trait or a phenotype for one trait. This can be specified with the parameter 'select_on' (options are called "Index", "EBV" and "Phenotype"). When "EBV" or "Phenotype" is chosen, then the trait on which selection is based need to be specified with the parameter 'trait'.
+
+##### Example
+In this example, 100 male and female selection candidates are pre-selected from the first batch of the first generation, based on their index. A maximum of 15 fish per full sib family can be selected.
+```{r eval=FALSE}
+ped <- preselselcand(gen = 1,
+                  batch = 1,
+                  Nm =100,
+                  Nf = 100,
+                  max_FSfam = 15)
+```
+
+####avail_selection()
+In the final selection step, only fish that are available for selection will be selected from the available batches and generations. Fish that are available for selection have a 1 in their column 'selcand'. In reality, not all (pre-selected) offspring will survive until the moment of selection. Therefore, avail_selection() can be used to simulate this: randomly, a specified proportion of the (pre-selected) offspring will be selected and they will be available for selection. In order to use this function, the parameters 'gen' and optionally 'batch' need to be specified, but also the parameter 'presel' needs to be specified. The parameter 'presel' indicates which fish can become selection candidates. If no pre-selection took place, the 'presel' should equal zero. Otherwise, 'presel' should equal the environment for which the selection candidate fish are pre-selected. To determine the number of fish that will become available as selection candidates, either the parameter 'surv' or the parameter 'fish_per_FSfam' need to be provided. 
+
+##### Example
+In this example, the fish for which ped$preselected equals 1 are the selection candidates, and 90% of them are assumed to survive till the moment of selection.
+```{r  eval=FALSE}
+ped <- avail_selection(gen = 1,
+                       batch = 1,
+                       presel = 1,  
+                       surv = 0.9)
+
+```
+
+####survive()
+Fish that are pre-selected for sib testing can be used to estimate the breeding values of the selection candidates. However, not all fish pre-selected for sib testing will survive till the moment of estimating breeding values. The function survive() can be used to randomly select pre-selected fish that will not survive. These fish will not be pre-selected anymore. 
+
+##### Example
+In this example, 90% of the fish for which ped$preselected equals 2 are still available for estimating breeding values.
+```{r  eval=FALSE}
+ped <- survive(gen = 1,
+               batch = 1,
+               presel = 2,  
+               surv = 0.9)
+
+```
+
+### Simulating estimated breeding values
+The function breeding_values() can be used to simulated estimated breeding values. In this package, EBVs will be simulated and not estimated. Therefore, accuracies need to be provided or calculated using deterministic formulas.
+
+There are several ways to simulate the EBVs: using the options "pheno", "sib_pheno", "PEBV" and "GEBV" for the parameter 'EBV'. The option "pheno" will result in an EBV that is equal to the phenotype of that trait. The option "sib_pheno" can be used for sib traits when no genomic selection is implemented. When this option is applied, then the EBV for a trait is calculated using the phenotypes of the full and half sibs that were pre-selected for sib testing. To do this, the parameter 'presel_sibs' needs to be used to specify which sibs were pre-selected for sib testing. For example, presel_sibs = 2 means that only the sibs that are preselected for 'environment 2' are used for calculating the EBVs. The mean of the phenotypes of the tested full and half sibs of the selection candidate are multiplied with selection index weights and then added. The selection index weights are calculated with the selection index method (Mrode, 2014). 
+
+For the options "PEBV" and "GEBV", EBVs are simulated as correlated values to the true breeding value (TBV). This is simulated using this formula:
+
+```{r eval=FALSE}
+EBV = r^2 * TBV + X * r * sqrt(1 - r^2)
+```
+
+where r^2^ is the accuracy of selection and X a random prediction error, drawn from a normal distribution with mean zero and a variance equal to the genetic variance. In case the option "PEBV" is chosen, then the prediction errors were correlated to the common environmental effects. This correlation equals $sqrt(c^{2} * h^{2}*(1 - r^{2}))$, in which c^2^ is the common environmental effect, h^2^ the heritability and r^2^ the accuracy of selection. 
+
+The accuracy of selection can be provided using the parameter 'accuracy'. However, the accuracy can also be calculated. In case of option "PEBV", the accuracy is calculated with the selection index method (Mrode, 2014), using the number of full sibs and half sibs selection candidates from the 'ped' data frame. In case option "GEBV" is used, then the accuracy can be calculated using the formula of Deatwyler et al. (2010). To calculate the accuracy in this way, the genome length (parameter 'GenomLength'), effective population size (parameter 'Ne'), the size of the training population (parameter 'SizeTraining') and the heritability (parameter 'h2') need to be provided.
+
+Breeding values are combined in an index when EBVs for more than two traits are estimated.
+
+##### Example
+In this example, genomic estimated breeding values are estimated for two traits.
+```{r  eval=FALSE}
+ped <- breeding_values(gen=1,
+                       batch = 1,
+                       TraitsIndex=c(2,3),
+                       EBV=c("GEBV","GEBV"),
+                       GenomLength = 11.3,
+                       Ne = 100,
+                       SizeTraining = c(2000, 2000, 1000),
+                       indexweights=c(2,1))
+
+```
+
+### Selection
+Fish need to be selected in order to be able to simulate a new generation. This can be done in multiple ways. The function select() from this package can be used, but also custom functions can be applied or functions from other packages or programs, for example to implement optimal contribution selection. 
+
+The function select() can be used to select fish based on their EBV, index or phenotype. Optionally, a maximum number of fish that can be selected per full sib family can be specified. Fish are selected from all the available selection candidates. If, in reality, not all selection candidates are available at the moment of selection due to for example maturation, then the parameters 'mature_m' and 'mature_f' can be used to simulate this. When these parameters are specified, fish are selected from a randomly selected proportion of the selection candidates.
+
+##### Example
+In this example, fish are selected based on their index (which is the default selection method). 50% of male and female selection candidates are assumed to be mature at the moment of selection.
+```{r  eval=FALSE}
+ ped <- select(gen=1,
+                  batch = 1,
+                  Nm = 50,
+                  Nf = 50,
+                  mature_m = 0.5,
+                  mature_f = 0.5)
+
+```
+
+### Next generations
+In order to simulate the next generations, a loop can be created with the functions previously described. 
+
+### Output
+The output of the simulation is a data frame called 'ped'. This is a pedigree file, including the sire, dam, true breeding values and estimated breeding values. This pedigree can be used to calculate several parameters, for example genetic gains, rate of inbreeding and the generation interval. To calculate the genetic gain and rate of inbreeding, the function deltaG_F() can be used.
+
+## Examples
+Several different aquaculture breeding programs can be simulated using the functions of AquaBPsim. Two examples are given here: one of a breeding program with a family design and one of a breeding program with group mating.
+
+### Family design
+A family design with 100 male and 100 female parents per generation is simulated in this example. Selection is based on pedigree information, and each generation 200 full sib families with 50 offspring are produced. 
+```{r   eval=FALSE}
+library(AquaBPsim)
+
+BPdata <- list(Ntraits = 3,
+             h2 = c(0.3,0.25,0.15),
+             c2 = c(0.1,0.05,0.02),
+             p_var = c(100,6400,4),
+             a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+             c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+             e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+             mean = c(50, 400, 10),
+             Rgen = matrix(c(1,   0.55,  0.1,
+                             0.55,   1,  0.3,
+                             0.1 ,  0.3,   1), nrow = 3),
+             Rres = matrix(c(1,   0.3,  0,
+                             0.3,   1,  0,
+                             0 ,  0, 1), nrow = 3),
+             Rcom = matrix(c(1,   0,  0,
+                             0,   1,  0,
+                             0 ,  0,  1), nrow = 3))
+
+ped <- founderpopfam(Nm = 100, 
+                     Nf = 100,
+                     TraitsIndex = c(2,3))
+
+# Selected males and females are randomly allocated to each other with the function randommating. 
+# 200 combinations are made in order to simulate 200 full sib families.
+Mating <- randommating(gen = 0,
+                       Nfam_FS = 200)
+
+# Offspring are simualted for each full sib family separately.
+for(mating in 1:nrow(Mating)){
+  ped <- offspringFSfam(gen = 1,
+                        No = 50,
+                        sire = Mating$Sire[mating],
+                        dam = Mating$Dam[mating],
+                        probmale = 0.5,
+                        TraitsIndex = c(2,3))
+}
+
+# Pre-selection based on the phenotype of trait 1. Fish are pre-selected within a fullsib family: 10 for the nucleus and 10 for the production environment. 
+ped <- preselphen(gen = 1,
+                  Nenv = 2,
+                  Npresel = c(10,10),
+                  trait = 1)
+
+# 90% of the fish that are pre-selected for the nucleus will be available for selection. These 90% are randomly chosen.
+ped <- avail_selection(gen = 1, presel = 1, surv = 0.9)
+
+# Simulating breeding values for all available selection candidates. 
+ped <- breeding_values(gen = 1,
+           TraitsIndex = c(2,3),
+           EBV = c("PEBV","sib_pheno"),
+           indexweights = c(2,1))
+
+# Selecting 100 males and 100 females based on their Index. It was assumed that 80% of the males and females are mature and therefore available for selection at the moment of selection
+ped<- select(Nm = 100, 
+             Nf = 100,
+             gen = 1, 
+             mature_m = 0.8, 
+             mature_f = 0.8)
+
+for(generation in 2:10){
+Mating <- randommating(gen = generation-1,
+                       Nfam_FS = 200)
+
+for(mating in 1:nrow(Mating)){
+  ped <- offspringFSfam(gen = generation,
+                        No = 50,
+                        sire = Mating$Sire[mating],
+                        dam = Mating$Dam[mating],
+                        probmale = 0.5,
+                        TraitsIndex = c(2,3))
+}
+
+ped <- preselphen(gen = generation,
+                  Nenv = 2,
+                  Npresel = c(10,10),
+                  trait = 1)
+
+ped <- avail_selection(gen = generation, presel = 1, surv = 0.9)
+
+ped <- breeding_values(gen = generation,
+                       TraitsIndex = c(2,3),
+                       EBV = c("PEBV","sib_pheno"),
+                       indexweights = c(2,1))
+
+ped<- select(Nm = 100, 
+             Nf = 100,
+             gen = generation, 
+             mature_m = 0.8, 
+             mature_f = 0.8)
+
+}
+
+
+# calculating genetic gain and rate of inbreeding
+deltaG_F()
+
+```
+
+
+
+### Group mating design
+A group mating design with six batches per generation, rotational mating, and 20 male parents and 10 female parents per batch is simulated. Genomic selection is implemented. 
+```{r   eval=FALSE}
+library(AquaBPsim)
+
+BPdata <- list(Ntraits = 3,
+               h2 = c(0.3,0.25,0.15),
+               c2 = c(0.1,0.05,0.02),
+               p_var = c(100,6400,4),
+               a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+               c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+               e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+               mean = c(50, 400, 10),
+               Rgen = matrix(c(1,   0.55,  0.1,
+                               0.55,   1,  0.3,
+                               0.1 ,  0.3,   1), nrow = 3, byrow = TRUE),
+               Rres = matrix(c(1,   0.3,  0,
+                               0.3,   1,  0,
+                               0 ,  0, 1), nrow = 3, byrow = TRUE),
+               Rcom = matrix(c(1,   0,  0,
+                               0,   1,  0,
+                               0 ,  0,  1), nrow = 3, byrow = TRUE))
+
+next_batch <- c(2:6,1)
+ped <- founderpopgroup(Nm = 120, 
+                       Nf = 60,
+                       Nbatch = 6,
+                       TraitsIndex = c(2,3))
+
+# A loop is created in order to simulate each batch separately. 
+for(batch in 1:6){
+  
+  # founder animal from one batch are mated with each other. 50% of the males and females contributes to the offspring, with contribution drawn from a gamma distribution with shape 0.75 and scale 0.11. The total number of offspring per batch is approximately 1000.
+  Mating <- groupmating(gen = 0,
+                        batch = batch,
+                        No = 1000,
+                        contr_m = 0.5,
+                        contr_f =0.5)
+  
+  # Offspring are simualted for each full sib family.
+  for(mating in 1:nrow(Mating)){
+    ped <- offspringFSgroup(gen = 1,
+                            batch = batch,
+                            No = Mating$No[mating],
+                            sire = Mating$Sire[mating],
+                            dam = Mating$Dam[mating],
+                            probmale = 0.5,
+                            TraitsIndex = c(2,3))
+  }
+  
+  # Preselection based on the phenotype of trait 1. Fish are preselected within a batch: 300 for the nucleus and 100 for the production environment.
+  ped <- preselphen(gen = 1,
+                    batch = batch,
+                    Nenv = 2,
+                    Npresel = c(300,100),
+                    trait = 1,
+                    withinfam = F)
+  
+  # 90% of the fish that are preselected for the nucleus will be available for selection. These 90% are randomly chosen.
+  ped <- avail_selection(gen = 1, batch = batch, presel = 1, surv = 0.9)
+  
+  # Simulating genomic breeding values for all available selection candidates. 
+  ped <- breeding_values(gen = 1,
+                         batch = batch,
+                         TraitsIndex = c(2,3),
+                         EBV = c("GEBV","GEBV"),
+                         accuracy = c(0.85,0.78),
+                         indexweights = c(2,1))
+  
+  # Selecting 20 males and 10 females based on their Index. 
+  ped<- select(gen = 1, 
+               batch = batch, 
+               Nm = 20,
+               Nf = 10)
+}
+
+for(generation in 2:10){
+  for(batch in 1:6){
+    
+    Mating <- groupmating(gen = generation - 1,
+                          batch_m = batch,
+                          batch_f = next_batch[batch],
+                          No = 1000,
+                          contr_m = 0.5,
+                          contr_f = 0.5)
+    
+    for(mating in 1:nrow(Mating)){
+      ped <- offspringFSgroup(gen = generation,
+                              batch = batch,
+                              No = Mating$No[mating],
+                              sire = Mating$Sire[mating],
+                              dam = Mating$Dam[mating],
+                              probmale = 0.5,
+                              TraitsIndex = c(2,3))
+    }
+    
+    ped <- preselphen(gen = generation,
+                      batch = batch,
+                      Nenv = 2,
+                      Npresel = c(300,100),
+                      trait = 1,
+                      withinfam = F)
+    
+    ped <- avail_selection(gen = generation, batch = batch, presel = 1, surv = 0.9)
+    
+    ped <- breeding_values(gen = generation,
+                           batch = batch,
+                           TraitsIndex = c(2,3),
+                           EBV = c("GEBV","GEBV"),
+                           accuracy = c(0.85,0.78),
+                           indexweights = c(2,1))
+    
+    ped<- select(gen = generation, 
+                 batch = batch, 
+                 Nm = 20,
+                 Nf = 10)
+  }
+}
+
+
+# calculating genetic gain and rate of inbreeding
+deltaG_F()
+
+```
+
+
+## References
+Bastiaansen, J. W., Coster, A., Calus, M. P., van Arendonk, J. A., & Bovenhuis, H. (2012). Long-term response to genomic selection: effects of estimation method and reference population structure for different genetic architectures. Genetics Selection Evolution, 44(1), 1-13.
+
+Brotherstone, S., & Goddard, M. (2005). Artificial selection and maintenance of genetic variance in the global dairy cow population. Philosophical Transactions of the Royal Society B: Biological Sciences, 360(1459), 1479-1488.
+
+Daetwyler, H. D., Pong-Wong, R., Villanueva, B., & Woolliams, J. A. (2010). The impact of genetic architecture on genome-wide evaluation methods. Genetics. 185(3). 1021-1031.
+
+Mrode, R. A. (2014). Linear models for the prediction of animal breeding values. Cabi.
+
+Rutten, M. J. M., Bijma, P., Woolliams, J. A., & Van Arendonk, J. A. M. (2002). SelAction: Software to predict selection response and rate of inbreeding in livestock breeding programs. Journal of Heredity, 93(6), 456-458.

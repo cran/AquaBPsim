@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>General structure</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<p>AquaBPsim is a package that can be used to simulate (aquaculture) breeding programs. The functions are written to simulate production and reproduction systems encountered in aquaculture and it is easy to combine the functions of the package with custom functions. Simulating breeding programs is useful to predict the expected genetic gain and rate of inbreeding. Additionally, simulations can be used to predict the effect of changes in the breeding program, for example a change in selection intensity or mating structure. </p>
+
+<p>Several programs and R package already exist to simulate breeding programs. However, most of them simulate genome wide-markers and QTLs, which can result in an unrealistically fast reduction of genetic variance due to fixation of QTL (Bastiaansen et al., 2012) compared to real breeding programs (Brotherstone &amp; Goddard, 2005). Additionally, not simulating genome wide-markers will result in less computation time. Other existing software, such as SelAction (Rutten et al., 2002), do not allow simulation of the specific breeding program structures of aquaculture breeding programs, such as inbreeding with pre-selection and sex reversal.</p>
+
+<h2>General structure</h2>
+
+<p>To simulate a breeding program, a founder population needs to be simulated. But first, a list called &#39;BPdata&#39; can be created with parameters that will be used in the functions. Several parameter do not need to be specified anymore in the functions when this list is created. This list needs to be called BPdata and the objects in the list need to have specific names.</p>
+
+<p>Simulating the founder population will result in a data frame that needs to be called &#39;ped&#39;. Simulated offspring will be added to this &#39;ped&#39; data frame. To create a new generation, the mating and offspring needs to be simulated. The mating functions will result in a new data frame, in which the parents of each full sib family are specified. For each full sib family, offspring can be simulated, which are added to the &#39;ped&#39; data frame. After the offspring are simulated, pre-selection steps can be added to the simulation, followed by simulating estimated breeding values (EBV) and the final selection, to select the parents for the next generation. The output of the simulation is a pedigree file with the genetic effects and phenotypes of all traits. This pedigree file can be used to calculate for example genetic gain and the rate of inbreeding.</p>
+
+<p>Several functions will be explained with an example of a breeding program with a family design. At the end, two other examples are given: one for a family design and one for a group mating design.</p>
+
+<h3>BPdata</h3>
+
+<p>At the start of the simulation, a list called &#39;BPdata&#39; can be created. This list can contain several parameters, mostly genetic parameters. The parameters that can be added to this list are:</p>
+
+<ul>
+<li>The number of males and females to be selected (called &#39;Nm&#39; and &#39;Nf&#39;)</li>
+<li>The probability that an offspring is a male (called &#39;probmale&#39;)</li>
+<li>The number of traits (called &#39;Ntraits&#39;)</li>
+<li>The heritabilities of the traits (a vector called &#39;h2&#39;)</li>
+<li>The common environmental effects of the traits (a vector called &#39;c2&#39;)</li>
+<li>The genetic, common environmental and residual variances (vectors called &#39;a_var&#39;, &#39;c_var&#39; and &#39;e_var&#39;, respectively)</li>
+<li>The mean of the traits (vector called &#39;mean&#39;)</li>
+<li>The genetic, common environmental and residual correlations (matrices called &#39;Rgen&#39;, &#39;Rcom&#39; and &#39;Rres&#39;, respectively)</li>
+</ul>
+
+<p>Adding these parameters to a list called &#39;BPdata&#39; will make the simulation easier, because the parameters from BPdata do not need to be specified anymore in the functions. The function gen_param() can also be used to create the list &#39;BPdata&#39; from a excel file, which should have a specific format.</p>
+
+<h5>Example</h5>
+
+<pre><code class="r">library(AquaBPsim)
+
+BPdata &lt;- list(Ntraits = 3,
+             h2 = c(0.3,0.25,0.15),
+             c2 = c(0.1,0.05,0.02),
+             p_var = c(100,6400,4),
+             a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+             c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+             e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+             mean = c(50, 400, 10),
+             Rgen = matrix(c(1,   0.55,  0.1,
+                             0.55,   1,  0.3,
+                             0.1 ,  0.3,   1), nrow = 3),
+             Rres = matrix(c(1,   0.3,  0,
+                             0.3,   1,  0,
+                             0 ,  0, 1), nrow = 3),
+             Rcom = matrix(c(1,   0,  0,
+                             0,   1,  0,
+                             0 ,  0,  1), nrow = 3))
+
+</code></pre>
+
+<h3>Founder population</h3>
+
+<p>At the start of the simulation, a founder population needs to be created. There are two functions that can create the founder population, namely founderpopfam() for a founder population of a breeding program with a family design and founderpopgroup() for a founder population of a breeding program with a group mating design. The input parameters are the same for both founder population functions, but the output is slightly different: founderpopfam() will create a data frame with a column &#39;FSfam&#39; (which indicates to which full sib family the fish belongs) and founderpopgroup() will create a data frame with the column &#39;Contribution&#39; instead of &#39;FSfam&#39;. The column &#39;Contribution&#39; shows the relative contribution of a fish in the group mating, see function groupmating(). </p>
+
+<p>The function simulates unrelated fish with genetic, common environmental and residual effects for each trait. Genetic effects are drawn from a normal distribution with a mean equal to the populations mean (provided with parameter &#39;mean&#39;) and a variance equal to the genetic variance (provided with parameter &#39;a_var&#39;). Common environmental and residual effects are drawn from normal distributions with mean zero and variance equal to the common environmental and residual variances, respectively. These variances are provided with the parameters &#39;c_var&#39; and &#39;e_var&#39;. Phenotypes are calculated by adding up these effects and the traits are correlated according to the specified correlations. </p>
+
+<p>Two types of founder animals can be simulated: fish that are used to breed the first generation (parameters &#39;Nm&#39; for males and &#39;Nf&#39; for females) and additional selection candidates for the next generation(s) (parameters &#39;Nm2&#39; for males and &#39;Nf2&#39; for females). In addition to the number of fish that need to be simulated, genetic parameters and the number of traits need to be provided, unless they are specified in the list &#39;BPdata&#39;. If not all traits are used for the final selection, and therefore not all of them need to be included in the selection index, the parameter &#39;TraitsIndex&#39; needs to be specified. A vector with traits needs to be provided for this parameter, see example. Batches can be assigned to the founder fish, using either parameter &#39;Nbatch&#39; to provide the total number of batches or parameter &#39;batch&#39; to provide a vector with the names of the batches. </p>
+
+<p>If desired, EBVs can be simulated for the founder animals, by setting the parameter &#39;est_EBV&#39; to True. By default, no EBVs are simulated. If EBVs are simulated, then there are four options: </p>
+
+<ol>
+<li>0 for giving each animal a breeding values of 0 for the specific trait; </li>
+<li>&ldquo;mean_pop&rdquo; for simulating EBVs that are equal to the mean of the population for all founder animals. The mean of the population is provided in the vector &#39;mean&#39;;</li>
+<li>&ldquo;pheno&rdquo; for simulating EBVs that are equal to the phenotype of the animal for the specific trait;</li>
+<li>&ldquo;EBV&rdquo; for simulating EBVs as a value correlated to the true breeding value of the animal. This correlation equals the accuracy. Accuracies need to be specified in the parameter &#39;accuracy&#39;</li>
+</ol>
+
+<h5>Example</h5>
+
+<p>In this example, a founder population is simulated for a family design. No additional fish and no EBVs are simulated. From the three simulated traits, two are in the selection index (trait 2 and 3). The founder animals are divided over four batches, with the numbers -3, -2, -1 and 0.</p>
+
+<pre><code class="r">
+ped &lt;- founderpopfam(Nm=200, 
+                     Nf=200,  
+                     batch=c(0,-1,-2,-3), 
+                     Ntraits=3, 
+                     TraitsIndex=c(2,3), 
+                     a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+                     c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+                     e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+                     mean = c(50, 400, 10),
+                     Rgen = matrix(c(1,   0.55,  0.1,
+                                     0.55,   1,  0.3,
+                                     0.1 ,  0.3,   1), nrow = 3),
+                     Rres = matrix(c(1,   0.3,  0,
+                                     0.3,   1,  0,
+                                     0 ,  0, 1), nrow = 3),
+                     Rcom = matrix(c(1,   0,  0,
+                                     0,   1,  0,
+                                     0 ,  0,  1), nrow = 3))
+
+</code></pre>
+
+<h3>Mating</h3>
+
+<p>Two different mating functions exist in this package, namely randommating(), which can be used for simulating a family design, and groupmating(), for simulations of a group mating design. The output of these two functions is a data frame with for each full sib family the sire and dam specified and (optional for the family design) the number of offspring per full sib family. For these functions, a data frame called &#39;ped&#39; needs to be present in the data. &#39;ped&#39; needs to contain all the sires and dams that need to be allocated to each other and the columns sex, selected, generation, batch and id, which should be the first column. The sires and dams can come from multiple batches or generations. In that case, a vector of batches or generations need to be provided to the parameters &#39;gen&#39; and &#39;batch&#39;.</p>
+
+<p>In the function randommating(), sires and dams are randomly allocated to each other, and each sires or dam contributes equally to the number of full sib families. The number of full sib families need to be specified in this function. </p>
+
+<p>In the function groupmating(), the sires and dams do not equally contribute to the offspring. It is possible that only a part of the selected fish will contribute. This part can be specified with the parameters &#39;contr_m&#39; and &#39;contr_f&#39;. A contribution is assigned to the fish that do contribute, and the contribution of the fish that do not contribute is set to zero. By default, the contributions of the fish that do contribute come from a gamma distribution. The default shape and scale of the gamma distribution are 0.75 and 0.11, respectively. A uniform distribution can also be specified for the contributions of the sires and dams. After the contributions are assigned, the number of offspring for each possible combination of sires and dams is calculated. First, the family contribution is calculated as the product of the two parent contributions. Each family contribution is divided by the sum of all family contributions and then multiplied with the total number of offspring per batch.</p>
+
+<h5>Example</h5>
+
+<p>In this example, 50 sires and dams (from the founder population simulated in the previous example) are randomly assigned to each other in order to be able to create 100 full sib families, resulting in a mating ratio of 2:2.</p>
+
+<pre><code class="r">Mating &lt;- randommating(gen = 0,
+                       batch = -3,
+                       Nfam_FS = 100)
+
+</code></pre>
+
+<h3>Simulating offspring</h3>
+
+<p>For each full sib family, offspring can be simulated with the functions offspringFSfam() and offspringFSgroup(). The simulated offspring are added to the &#39;ped&#39; file. Genetic, common environmental and residual effects and phenotypes are simulated for the offspring. Residual effects and phenotypes are simulated in the same way as described under &#39;Founder population&#39;. Genetic effects are simulated as half of the genetic effect of the dam and half of the genetic effect of the sire, plus a Mendelian sampling term. The Mendelian sampling term is drawn from  a normal distribution with mean zero and a variance equal to half of the genetic variance and corrected for the inbreeding level of the sire and dam. A common environmental effect will be simulated for each full sib family, and is drawn from a normal distribution with mean zero and a variance equal to the common environmental variance.</p>
+
+<p>The input parameters are similar to the functions that simulate the founder populations, except for the parameters that make it possible to simulate EBVs: they are not present in offspringFSfam() and offspringFSgroup(). Additional parameters are &#39;gen&#39;, &#39;sire&#39;, &#39;dam&#39;, &#39;No&#39; and &#39;probmale&#39;. &#39;gen&#39; specifies the generation of the offspring, &#39;sire&#39; and &#39;dam&#39; the sire and dam of the offspring, &#39;No&#39; the number of offspring in the full sib family and &#39;probmale&#39; is the probability that a fish is a male.</p>
+
+<h5>Example</h5>
+
+<p>In this example, the first batch of offspring of generation one is simulated. Due to the loop, 50 offspring for each full sib family in the data frame &#39;Mating&#39; are simulated. </p>
+
+<pre><code class="r">for(mating in 1:nrow(Mating)){
+  ped &lt;- offspringFSfam(gen=1,
+                        No=50,
+                        sire=Mating$Sire[mating],
+                        dam=Mating$Dam[mating],
+                        batch = 1,
+                        probmale = 0.5,
+                        TraitsIndex = c(2,3))
+}
+
+</code></pre>
+
+<h3>Pre-selection and selection candidates</h3>
+
+<p>This package contains three different functions for pre-selecting the offspring. These functions can be used for phenotypically pre-selecting offspring (preselphen()), randomly assigning the offspring to different environments or groups (preselrandom()) or pre-selection the selection candidates based on their EBVs, index or phenotypes (preselselcand()). These functions are discussed below, together with the functions avail_selection() and survive(), which can be used to determine which fish survive and therefore become available as selection candidates, and which of the pre-selected fish survive till the moment of breeding value estimation.</p>
+
+<p>####preselphen()
+The function preselphen() can be used to pre-select offspring based on the phenotype of one trait. The offspring can be pre-selected for several environments, based on the same trait. For example, in a breeding program, some fish are pre-selected to become selection candidates and other fish are pre-selected for sib testing. To simulate this, the parameter &#39;Nenv&#39; needs to be 2. Fish with the highest phenotype for the specified trait are pre-selected for the first environment, and the next best fish are pre-selected for the second environment. Pre-selected fish get the environment they are selected for specified in the column &#39;preselected&#39; in the &#39;ped&#39; data frame. If fish need to be pre-selected for more than one environment, then a vector with the number of fish that need to be pre-selected for each environment need to be specified for the parameter &#39;Npresel&#39;. If fish need to be pre-selected for just one environment, then one number for the number of pre-selected fish can be provided for the parameter &#39;Npresel&#39;.</p>
+
+<p>By default, pre-selection takes place within a full sib family. If this is not desired, then the parameter &#39;withinfam&#39; can be set to False.</p>
+
+<h5>Example</h5>
+
+<p>In this example, 10 fish per full sib family are pre-selected for environment 1 and 5 fish per full sib family are pre-selected for environment 2. Pre-selection was based on the phenotype of trait 1.</p>
+
+<pre><code class="r">ped &lt;- preselphen(gen = 1,
+                  batch=1,
+                  Nenv = 2, 
+                  Npresel = c(10,5), 
+                  trait= 1)
+
+</code></pre>
+
+<p>####preselrandom()
+preselrandom() can be used to randomly pre-select fish for different environments. The function works in the same way as preselphen(), except that fish are randomly pre-selected instead of based on their phenotype. Therefore, parameters &#39;trait&#39; and &#39;Ntraits&#39; do not need to be specified in preselrandom(). </p>
+
+<h5>Example</h5>
+
+<p>In this example, 10 fish per full sib family are randomly pre-selected for environment 1 and 5 fish per full sib family are randomly pre-selected for environment 2.</p>
+
+<pre><code class="r">ped &lt;- preselrandom(gen = 1,
+                    batch=1,
+                    Nenv = 2, 
+                    Npresel = c(10,5))
+
+</code></pre>
+
+<p>####preselselcand()
+The function preselselcand() can be used to pre-select selection candidates based on either their index (default), their EBV of one trait or their phenotype of one trait. Fish are preselected from the fish that are available for selection (column selcand==1). Fish that are not pre-selected will be assigned a value of 2 for the column selcand. These fish will not be used in the function select().</p>
+
+<p>In this function, the total number of fish that needs to be pre-selected can be specified, or a number of males and females can be specified. If the total number of fish is specified (parameter &#39;N&#39;), then fish are pre-selected regardless of their sex. If a family design is simulated, then the parameter &#39;within_FSfam&#39; can be set to True, if within family selection is desired. The default is False. In case selection does not take place within a full sib family, then a maximum number of sibs that can be selected from one full sib family can be specified using the parameter &#39;max_FSfam&#39;. </p>
+
+<p>As mentioned before, pre-selection can be based on either the index (default), an EBV of one trait or a phenotype for one trait. This can be specified with the parameter &#39;select_on&#39; (options are called &ldquo;Index&rdquo;, &ldquo;EBV&rdquo; and &ldquo;Phenotype&rdquo;). When &ldquo;EBV&rdquo; or &ldquo;Phenotype&rdquo; is chosen, then the trait on which selection is based need to be specified with the parameter &#39;trait&#39;.</p>
+
+<h5>Example</h5>
+
+<p>In this example, 100 male and female selection candidates are pre-selected from the first batch of the first generation, based on their index. A maximum of 15 fish per full sib family can be selected.</p>
+
+<pre><code class="r">ped &lt;- preselselcand(gen = 1,
+                  batch = 1,
+                  Nm =100,
+                  Nf = 100,
+                  max_FSfam = 15)
+</code></pre>
+
+<p>####avail_selection()
+In the final selection step, only fish that are available for selection will be selected from the available batches and generations. Fish that are available for selection have a 1 in their column &#39;selcand&#39;. In reality, not all (pre-selected) offspring will survive until the moment of selection. Therefore, avail_selection() can be used to simulate this: randomly, a specified proportion of the (pre-selected) offspring will be selected and they will be available for selection. In order to use this function, the parameters &#39;gen&#39; and optionally &#39;batch&#39; need to be specified, but also the parameter &#39;presel&#39; needs to be specified. The parameter &#39;presel&#39; indicates which fish can become selection candidates. If no pre-selection took place, the &#39;presel&#39; should equal zero. Otherwise, &#39;presel&#39; should equal the environment for which the selection candidate fish are pre-selected. To determine the number of fish that will become available as selection candidates, either the parameter &#39;surv&#39; or the parameter &#39;fish_per_FSfam&#39; need to be provided. </p>
+
+<h5>Example</h5>
+
+<p>In this example, the fish for which ped$preselected equals 1 are the selection candidates, and 90% of them are assumed to survive till the moment of selection.</p>
+
+<pre><code class="r">ped &lt;- avail_selection(gen = 1,
+                       batch = 1,
+                       presel = 1,  
+                       surv = 0.9)
+
+</code></pre>
+
+<p>####survive()
+Fish that are pre-selected for sib testing can be used to estimate the breeding values of the selection candidates. However, not all fish pre-selected for sib testing will survive till the moment of estimating breeding values. The function survive() can be used to randomly select pre-selected fish that will not survive. These fish will not be pre-selected anymore. </p>
+
+<h5>Example</h5>
+
+<p>In this example, 90% of the fish for which ped$preselected equals 2 are still available for estimating breeding values.</p>
+
+<pre><code class="r">ped &lt;- survive(gen = 1,
+               batch = 1,
+               presel = 2,  
+               surv = 0.9)
+
+</code></pre>
+
+<h3>Simulating estimated breeding values</h3>
+
+<p>The function breeding_values() can be used to simulated estimated breeding values. In this package, EBVs will be simulated and not estimated. Therefore, accuracies need to be provided or calculated using deterministic formulas.</p>
+
+<p>There are several ways to simulate the EBVs: using the options &ldquo;pheno&rdquo;, &ldquo;sib_pheno&rdquo;, &ldquo;PEBV&rdquo; and &ldquo;GEBV&rdquo; for the parameter &#39;EBV&#39;. The option &ldquo;pheno&rdquo; will result in an EBV that is equal to the phenotype of that trait. The option &ldquo;sib_pheno&rdquo; can be used for sib traits when no genomic selection is implemented. When this option is applied, then the EBV for a trait is calculated using the phenotypes of the full and half sibs that were pre-selected for sib testing. To do this, the parameter &#39;presel_sibs&#39; needs to be used to specify which sibs were pre-selected for sib testing. For example, presel_sibs = 2 means that only the sibs that are preselected for &#39;environment 2&#39; are used for calculating the EBVs. The mean of the phenotypes of the tested full and half sibs of the selection candidate are multiplied with selection index weights and then added. The selection index weights are calculated with the selection index method (Mrode, 2014). </p>
+
+<p>For the options &ldquo;PEBV&rdquo; and &ldquo;GEBV&rdquo;, EBVs are simulated as correlated values to the true breeding value (TBV). This is simulated using this formula:</p>
+
+<pre><code class="r">EBV = r^2 * TBV + X * r * sqrt(1 - r^2)
+</code></pre>
+
+<p>where r<sup>2^</sup> is the accuracy of selection and X a random prediction error, drawn from a normal distribution with mean zero and a variance equal to the genetic variance. In case the option &ldquo;PEBV&rdquo; is chosen, then the prediction errors were correlated to the common environmental effects. This correlation equals \(sqrt(c^{2} * h^{2}*(1 - r^{2}))\), in which c<sup>2^</sup> is the common environmental effect, h<sup>2^</sup> the heritability and r<sup>2^</sup> the accuracy of selection. </p>
+
+<p>The accuracy of selection can be provided using the parameter &#39;accuracy&#39;. However, the accuracy can also be calculated. In case of option &ldquo;PEBV&rdquo;, the accuracy is calculated with the selection index method (Mrode, 2014), using the number of full sibs and half sibs selection candidates from the &#39;ped&#39; data frame. In case option &ldquo;GEBV&rdquo; is used, then the accuracy can be calculated using the formula of Deatwyler et al. (2010). To calculate the accuracy in this way, the genome length (parameter &#39;GenomLength&#39;), effective population size (parameter &#39;Ne&#39;), the size of the training population (parameter &#39;SizeTraining&#39;) and the heritability (parameter &#39;h2&#39;) need to be provided.</p>
+
+<p>Breeding values are combined in an index when EBVs for more than two traits are estimated.</p>
+
+<h5>Example</h5>
+
+<p>In this example, genomic estimated breeding values are estimated for two traits.</p>
+
+<pre><code class="r">ped &lt;- breeding_values(gen=1,
+                       batch = 1,
+                       TraitsIndex=c(2,3),
+                       EBV=c(&quot;GEBV&quot;,&quot;GEBV&quot;),
+                       GenomLength = 11.3,
+                       Ne = 100,
+                       SizeTraining = c(2000, 2000, 1000),
+                       indexweights=c(2,1))
+
+</code></pre>
+
+<h3>Selection</h3>
+
+<p>Fish need to be selected in order to be able to simulate a new generation. This can be done in multiple ways. The function select() from this package can be used, but also custom functions can be applied or functions from other packages or programs, for example to implement optimal contribution selection. </p>
+
+<p>The function select() can be used to select fish based on their EBV, index or phenotype. Optionally, a maximum number of fish that can be selected per full sib family can be specified. Fish are selected from all the available selection candidates. If, in reality, not all selection candidates are available at the moment of selection due to for example maturation, then the parameters &#39;mature_m&#39; and &#39;mature_f&#39; can be used to simulate this. When these parameters are specified, fish are selected from a randomly selected proportion of the selection candidates.</p>
+
+<h5>Example</h5>
+
+<p>In this example, fish are selected based on their index (which is the default selection method). 50% of male and female selection candidates are assumed to be mature at the moment of selection.</p>
+
+<pre><code class="r"> ped &lt;- select(gen=1,
+                  batch = 1,
+                  Nm = 50,
+                  Nf = 50,
+                  mature_m = 0.5,
+                  mature_f = 0.5)
+
+</code></pre>
+
+<h3>Next generations</h3>
+
+<p>In order to simulate the next generations, a loop can be created with the functions previously described. </p>
+
+<h3>Output</h3>
+
+<p>The output of the simulation is a data frame called &#39;ped&#39;. This is a pedigree file, including the sire, dam, true breeding values and estimated breeding values. This pedigree can be used to calculate several parameters, for example genetic gains, rate of inbreeding and the generation interval. To calculate the genetic gain and rate of inbreeding, the function deltaG_F() can be used.</p>
+
+<h2>Examples</h2>
+
+<p>Several different aquaculture breeding programs can be simulated using the functions of AquaBPsim. Two examples are given here: one of a breeding program with a family design and one of a breeding program with group mating.</p>
+
+<h3>Family design</h3>
+
+<p>A family design with 100 male and 100 female parents per generation is simulated in this example. Selection is based on pedigree information, and each generation 200 full sib families with 50 offspring are produced. </p>
+
+<pre><code class="r">library(AquaBPsim)
+
+BPdata &lt;- list(Ntraits = 3,
+             h2 = c(0.3,0.25,0.15),
+             c2 = c(0.1,0.05,0.02),
+             p_var = c(100,6400,4),
+             a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+             c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+             e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+             mean = c(50, 400, 10),
+             Rgen = matrix(c(1,   0.55,  0.1,
+                             0.55,   1,  0.3,
+                             0.1 ,  0.3,   1), nrow = 3),
+             Rres = matrix(c(1,   0.3,  0,
+                             0.3,   1,  0,
+                             0 ,  0, 1), nrow = 3),
+             Rcom = matrix(c(1,   0,  0,
+                             0,   1,  0,
+                             0 ,  0,  1), nrow = 3))
+
+ped &lt;- founderpopfam(Nm = 100, 
+                     Nf = 100,
+                     TraitsIndex = c(2,3))
+
+# Selected males and females are randomly allocated to each other with the function randommating. 
+# 200 combinations are made in order to simulate 200 full sib families.
+Mating &lt;- randommating(gen = 0,
+                       Nfam_FS = 200)
+
+# Offspring are simualted for each full sib family separately.
+for(mating in 1:nrow(Mating)){
+  ped &lt;- offspringFSfam(gen = 1,
+                        No = 50,
+                        sire = Mating$Sire[mating],
+                        dam = Mating$Dam[mating],
+                        probmale = 0.5,
+                        TraitsIndex = c(2,3))
+}
+
+# Pre-selection based on the phenotype of trait 1. Fish are pre-selected within a fullsib family: 10 for the nucleus and 10 for the production environment. 
+ped &lt;- preselphen(gen = 1,
+                  Nenv = 2,
+                  Npresel = c(10,10),
+                  trait = 1)
+
+# 90% of the fish that are pre-selected for the nucleus will be available for selection. These 90% are randomly chosen.
+ped &lt;- avail_selection(gen = 1, presel = 1, surv = 0.9)
+
+# Simulating breeding values for all available selection candidates. 
+ped &lt;- breeding_values(gen = 1,
+           TraitsIndex = c(2,3),
+           EBV = c(&quot;PEBV&quot;,&quot;sib_pheno&quot;),
+           indexweights = c(2,1))
+
+# Selecting 100 males and 100 females based on their Index. It was assumed that 80% of the males and females are mature and therefore available for selection at the moment of selection
+ped&lt;- select(Nm = 100, 
+             Nf = 100,
+             gen = 1, 
+             mature_m = 0.8, 
+             mature_f = 0.8)
+
+for(generation in 2:10){
+Mating &lt;- randommating(gen = generation-1,
+                       Nfam_FS = 200)
+
+for(mating in 1:nrow(Mating)){
+  ped &lt;- offspringFSfam(gen = generation,
+                        No = 50,
+                        sire = Mating$Sire[mating],
+                        dam = Mating$Dam[mating],
+                        probmale = 0.5,
+                        TraitsIndex = c(2,3))
+}
+
+ped &lt;- preselphen(gen = generation,
+                  Nenv = 2,
+                  Npresel = c(10,10),
+                  trait = 1)
+
+ped &lt;- avail_selection(gen = generation, presel = 1, surv = 0.9)
+
+ped &lt;- breeding_values(gen = generation,
+                       TraitsIndex = c(2,3),
+                       EBV = c(&quot;PEBV&quot;,&quot;sib_pheno&quot;),
+                       indexweights = c(2,1))
+
+ped&lt;- select(Nm = 100, 
+             Nf = 100,
+             gen = generation, 
+             mature_m = 0.8, 
+             mature_f = 0.8)
+
+}
+
+
+# calculating genetic gain and rate of inbreeding
+deltaG_F()
+
+</code></pre>
+
+<h3>Group mating design</h3>
+
+<p>A group mating design with six batches per generation, rotational mating, and 20 male parents and 10 female parents per batch is simulated. Genomic selection is implemented. </p>
+
+<pre><code class="r">library(AquaBPsim)
+
+BPdata &lt;- list(Ntraits = 3,
+               h2 = c(0.3,0.25,0.15),
+               c2 = c(0.1,0.05,0.02),
+               p_var = c(100,6400,4),
+               a_var = c(0.3,0.25,0.15)*c(100,6400,4),
+               c_var = c(0.1,0.05,0.02)*c(100,6400,4),
+               e_var = c(100,6400,4)*(1-c(0.1,0.05,0.02)-c(0.3,0.25,0.15)),
+               mean = c(50, 400, 10),
+               Rgen = matrix(c(1,   0.55,  0.1,
+                               0.55,   1,  0.3,
+                               0.1 ,  0.3,   1), nrow = 3, byrow = TRUE),
+               Rres = matrix(c(1,   0.3,  0,
+                               0.3,   1,  0,
+                               0 ,  0, 1), nrow = 3, byrow = TRUE),
+               Rcom = matrix(c(1,   0,  0,
+                               0,   1,  0,
+                               0 ,  0,  1), nrow = 3, byrow = TRUE))
+
+next_batch &lt;- c(2:6,1)
+ped &lt;- founderpopgroup(Nm = 120, 
+                       Nf = 60,
+                       Nbatch = 6,
+                       TraitsIndex = c(2,3))
+
+# A loop is created in order to simulate each batch separately. 
+for(batch in 1:6){
+
+  # founder animal from one batch are mated with each other. 50% of the males and females contributes to the offspring, with contribution drawn from a gamma distribution with shape 0.75 and scale 0.11. The total number of offspring per batch is approximately 1000.
+  Mating &lt;- groupmating(gen = 0,
+                        batch = batch,
+                        No = 1000,
+                        contr_m = 0.5,
+                        contr_f =0.5)
+
+  # Offspring are simualted for each full sib family.
+  for(mating in 1:nrow(Mating)){
+    ped &lt;- offspringFSgroup(gen = 1,
+                            batch = batch,
+                            No = Mating$No[mating],
+                            sire = Mating$Sire[mating],
+                            dam = Mating$Dam[mating],
+                            probmale = 0.5,
+                            TraitsIndex = c(2,3))
+  }
+
+  # Preselection based on the phenotype of trait 1. Fish are preselected within a batch: 300 for the nucleus and 100 for the production environment.
+  ped &lt;- preselphen(gen = 1,
+                    batch = batch,
+                    Nenv = 2,
+                    Npresel = c(300,100),
+                    trait = 1,
+                    withinfam = F)
+
+  # 90% of the fish that are preselected for the nucleus will be available for selection. These 90% are randomly chosen.
+  ped &lt;- avail_selection(gen = 1, batch = batch, presel = 1, surv = 0.9)
+
+  # Simulating genomic breeding values for all available selection candidates. 
+  ped &lt;- breeding_values(gen = 1,
+                         batch = batch,
+                         TraitsIndex = c(2,3),
+                         EBV = c(&quot;GEBV&quot;,&quot;GEBV&quot;),
+                         accuracy = c(0.85,0.78),
+                         indexweights = c(2,1))
+
+  # Selecting 20 males and 10 females based on their Index. 
+  ped&lt;- select(gen = 1, 
+               batch = batch, 
+               Nm = 20,
+               Nf = 10)
+}
+
+for(generation in 2:10){
+  for(batch in 1:6){
+
+    Mating &lt;- groupmating(gen = generation - 1,
+                          batch_m = batch,
+                          batch_f = next_batch[batch],
+                          No = 1000,
+                          contr_m = 0.5,
+                          contr_f = 0.5)
+
+    for(mating in 1:nrow(Mating)){
+      ped &lt;- offspringFSgroup(gen = generation,
+                              batch = batch,
+                              No = Mating$No[mating],
+                              sire = Mating$Sire[mating],
+                              dam = Mating$Dam[mating],
+                              probmale = 0.5,
+                              TraitsIndex = c(2,3))
+    }
+
+    ped &lt;- preselphen(gen = generation,
+                      batch = batch,
+                      Nenv = 2,
+                      Npresel = c(300,100),
+                      trait = 1,
+                      withinfam = F)
+
+    ped &lt;- avail_selection(gen = generation, batch = batch, presel = 1, surv = 0.9)
+
+    ped &lt;- breeding_values(gen = generation,
+                           batch = batch,
+                           TraitsIndex = c(2,3),
+                           EBV = c(&quot;GEBV&quot;,&quot;GEBV&quot;),
+                           accuracy = c(0.85,0.78),
+                           indexweights = c(2,1))
+
+    ped&lt;- select(gen = generation, 
+                 batch = batch, 
+                 Nm = 20,
+                 Nf = 10)
+  }
+}
+
+
+# calculating genetic gain and rate of inbreeding
+deltaG_F()
+
+</code></pre>
+
+<h2>References</h2>
+
+<p>Bastiaansen, J. W., Coster, A., Calus, M. P., van Arendonk, J. A., &amp; Bovenhuis, H. (2012). Long-term response to genomic selection: effects of estimation method and reference population structure for different genetic architectures. Genetics Selection Evolution, 44(1), 1-13.</p>
+
+<p>Brotherstone, S., &amp; Goddard, M. (2005). Artificial selection and maintenance of genetic variance in the global dairy cow population. Philosophical Transactions of the Royal Society B: Biological Sciences, 360(1459), 1479-1488.</p>
+
+<p>Daetwyler, H. D., Pong-Wong, R., Villanueva, B., &amp; Woolliams, J. A. (2010). The impact of genetic architecture on genome-wide evaluation methods. Genetics. 185(3). 1021-1031.</p>
+
+<p>Mrode, R. A. (2014). Linear models for the prediction of animal breeding values. Cabi.</p>
+
+<p>Rutten, M. J. M., Bijma, P., Woolliams, J. A., &amp; Van Arendonk, J. A. M. (2002). SelAction: Software to predict selection response and rate of inbreeding in livestock breeding programs. Journal of Heredity, 93(6), 456-458.</p>
+
+</body>
+
+</html>
